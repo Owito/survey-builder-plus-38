@@ -105,7 +105,7 @@ const Index = () => {
 
       <footer className="border-t border-border py-8">
         <div className="container mx-auto px-4 text-center text-muted-foreground">
-          <p>© 2024 Sistema de Encuestas Web - Politécnico Grancolombiano</p>
+          <p>© 2025 Sistema de Encuestas Web - Autor: Carlos Guerra - Politécnico Grancolombiano</p>
           <p className="text-sm mt-2">Proyecto Académico - Desarrollo de Software en Equipo (TSP)</p>
         </div>
       </footer>
