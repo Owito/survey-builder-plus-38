@@ -210,5 +210,5 @@ Para preguntas o soporte relacionado con este proyecto académico, contactar al 
 
 ---
 
-**Politécnico Grancolombiano - 2024**  
+**Politécnico Grancolombiano - 2025**  
 *Ingeniería de Software - Desarrollo de Software en Equipo (TSP)*
