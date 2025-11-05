@@ -9,33 +9,56 @@ const AuthContext = createContext({});
  * AuthProvider Component
  * Maneja el estado de autenticación global de la aplicación
  * Proporciona funciones para login, registro, logout y verificación de sesión
+ * Ahora incluye gestión de roles de usuario (Administrador, Encuestador, Respondiente)
  */
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState(null);
+  const [role, setRole] = useState(null);
   const navigate = useNavigate();
+
+  /**
+   * Cargar perfil y rol del usuario
+   */
+  const loadUserData = async (userId) => {
+    try {
+      // Cargar perfil
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+      setProfile(profileData);
+
+      // Cargar rol
+      const { data: roleData } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userId)
+        .single();
+      setRole(roleData?.role || null);
+    } catch (error) {
+      console.error('Error cargando datos del usuario:', error);
+    }
+  };
 
   useEffect(() => {
     // Configurar el listener de cambios de autenticación PRIMERO
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         
-        // Cargar perfil del usuario si está autenticado
+        // Cargar perfil y rol del usuario si está autenticado
         if (session?.user) {
-          setTimeout(async () => {
-            const { data: profileData } = await supabase
-              .from('profiles')
-              .select('*')
-              .eq('id', session.user.id)
-              .single();
-            setProfile(profileData);
+          setTimeout(() => {
+            loadUserData(session.user.id);
           }, 0);
         } else {
           setProfile(null);
+          setRole(null);
         }
       }
     );
@@ -46,12 +69,7 @@ export const AuthProvider = ({ children }) => {
       setUser(session?.user ?? null);
       
       if (session?.user) {
-        supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single()
-          .then(({ data }) => setProfile(data));
+        loadUserData(session.user.id);
       }
       setLoading(false);
     });
@@ -61,17 +79,20 @@ export const AuthProvider = ({ children }) => {
 
   /**
    * Registro de nuevo usuario
-   * @param {string} email - Email del usuario
-   * @param {string} password - Contraseña del usuario
+   * @param {Object} userData - Datos del usuario (email, password, fullName, role)
    */
-  const signUp = async (email, password) => {
+  const signUp = async ({ email, password, fullName, role: userRole }) => {
     try {
       const redirectUrl = `${window.location.origin}/`;
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: redirectUrl
+          emailRedirectTo: redirectUrl,
+          data: {
+            full_name: fullName,
+            role: userRole
+          }
         }
       });
 
@@ -95,7 +116,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   /**
-   * Inicio de sesión
+   * Inicio de sesión con redirección basada en rol
    * @param {string} email - Email del usuario
    * @param {string} password - Contraseña del usuario
    */
@@ -108,12 +129,29 @@ export const AuthProvider = ({ children }) => {
 
       if (error) throw error;
 
+      // Obtener rol del usuario para redirigir
+      const { data: roleData } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', data.user.id)
+        .single();
+
+      const userRole = roleData?.role;
+
       toast({
         title: "¡Bienvenido!",
         description: "Has iniciado sesión correctamente.",
       });
 
-      navigate('/dashboard');
+      // Redirigir según rol
+      if (userRole === 'administrador') {
+        navigate('/admin/dashboard');
+      } else if (userRole === 'encuestador') {
+        navigate('/surveys/dashboard');
+      } else {
+        navigate('/encuestas');
+      }
+
       return { data, error: null };
     } catch (error) {
       console.error('Error en login:', error);
@@ -139,6 +177,7 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
       setSession(null);
       setProfile(null);
+      setRole(null);
       
       toast({
         title: "Sesión cerrada",
@@ -160,6 +199,7 @@ export const AuthProvider = ({ children }) => {
     user,
     session,
     profile,
+    role,
     loading,
     signUp,
     signIn,
