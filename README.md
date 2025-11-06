@@ -27,7 +27,7 @@ Este sistema permite la creación, aplicación y análisis de encuestas personal
 
 - **Frontend**: React 18 con Vite
 - **Estilos**: TailwindCSS + shadcn/ui
-- **Backend**: Lovable Cloud (Supabase)
+- **Backend**: Supabase
 - **Base de datos**: PostgreSQL (mediante Supabase)
 - **Autenticación**: Supabase Auth
 - **Lenguaje**: JavaScript (JSX)
