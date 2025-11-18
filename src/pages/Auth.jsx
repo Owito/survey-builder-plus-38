@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
-import { BarChart3, Eye, EyeOff, Mail, Lock } from 'lucide-react';
+import { BarChart3, Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 /**
@@ -158,106 +158,110 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-background via-muted/30 to-background relative overflow-hidden p-4">
+      {/* Decorative elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-accent/5 rounded-full blur-3xl" />
+      </div>
+      
+      <Card className="w-full max-w-md shadow-2xl border-2 backdrop-blur-sm bg-card/95 relative z-10">
+        <CardHeader className="space-y-1 text-center pb-6">
           <div className="flex justify-center mb-4">
-            <BarChart3 className="h-16 w-16 text-primary" />
+            <div className="relative">
+              <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl" />
+              <div className="relative bg-gradient-to-br from-primary to-primary/80 p-4 rounded-2xl shadow-lg">
+                <BarChart3 className="h-10 w-10 text-primary-foreground" />
+              </div>
+            </div>
           </div>
-          <h1 className="text-3xl font-bold mb-2">Sistema de Encuestas</h1>
-          <p className="text-muted-foreground">Politécnico Grancolombiano</p>
-        </div>
+          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent">
+            Sistema de Encuestas
+          </CardTitle>
+          <CardDescription className="text-base">Politécnico Grancolombiano</CardDescription>
+        </CardHeader>
 
-        <Tabs defaultValue="login" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="login">Iniciar Sesión</TabsTrigger>
-            <TabsTrigger value="register">Registrarse</TabsTrigger>
-          </TabsList>
+        <CardContent className="pt-0">
+          <Tabs defaultValue="login" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 h-12 bg-muted/50 mb-6">
+              <TabsTrigger 
+                value="login" 
+                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-medium transition-all"
+              >
+                Iniciar Sesión
+              </TabsTrigger>
+              <TabsTrigger 
+                value="register" 
+                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-medium transition-all"
+              >
+                Registrarse
+              </TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="login">
-            <Card>
-              <CardHeader>
-                <CardTitle>Iniciar Sesión</CardTitle>
-                <CardDescription>
-                  Ingresa tus credenciales para acceder al sistema
-                </CardDescription>
-              </CardHeader>
-              <form onSubmit={handleLogin}>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="email-login">Email</Label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="email-login"
-                        type="email"
-                        placeholder="tu@email.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="pl-10"
-                        required
-                      />
-                    </div>
+            <TabsContent value="login" className="mt-0">
+              <form onSubmit={handleLogin} className="space-y-5">
+                <div className="space-y-2">
+                  <Label htmlFor="email-login" className="text-sm font-semibold">Email</Label>
+                  <div className="relative group">
+                    <Mail className="absolute left-3 top-3 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                    <Input
+                      id="email-login"
+                      type="email"
+                      placeholder="tu@email.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="pl-10 h-11 border-2 focus-visible:ring-primary/20 transition-all"
+                      required
+                    />
                   </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="password-login">Contraseña</Label>
-                      <Button
-                        type="button"
-                        variant="link"
-                        className="px-0 h-auto text-xs"
-                        onClick={handleForgotPassword}
-                      >
-                        ¿Olvidaste tu contraseña?
-                      </Button>
-                    </div>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="password-login"
-                        type={showPassword ? "text" : "password"}
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="pl-10 pr-10"
-                        required
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? (
-                          <EyeOff className="h-4 w-4 text-muted-foreground" />
-                        ) : (
-                          <Eye className="h-4 w-4 text-muted-foreground" />
-                        )}
-                      </Button>
-                    </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="password-login" className="text-sm font-semibold">Contraseña</Label>
+                    <Button
+                      type="button"
+                      variant="link"
+                      className="px-0 h-auto text-xs text-primary hover:text-primary/80 font-medium"
+                      onClick={handleForgotPassword}
+                    >
+                      ¿Olvidaste tu contraseña?
+                    </Button>
                   </div>
-                </CardContent>
-                <CardFooter>
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
-                  </Button>
-                </CardFooter>
+                  <div className="relative group">
+                    <Lock className="absolute left-3 top-3 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                    <Input
+                      id="password-login"
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="pl-10 pr-12 h-11 border-2 focus-visible:ring-primary/20 transition-all"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-3 text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
+                  </div>
+                </div>
+                <Button 
+                  type="submit" 
+                  className="w-full h-11 font-semibold text-base shadow-lg hover:shadow-xl transition-all mt-6" 
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Iniciando sesión..." : "Iniciar Sesión"}
+                </Button>
               </form>
-            </Card>
-          </TabsContent>
+            </TabsContent>
 
-          <TabsContent value="register">
-            <Card>
-              <CardHeader>
-                <CardTitle>Crear Cuenta</CardTitle>
-                <CardDescription>
-                  Regístrate para empezar a usar el sistema
-                </CardDescription>
-              </CardHeader>
-              <form onSubmit={handleRegister}>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="full-name">Nombre Completo</Label>
+            <TabsContent value="register" className="mt-0">
+              <form onSubmit={handleRegister} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="full-name" className="text-sm font-semibold">Nombre Completo</Label>
+                  <div className="relative group">
+                    <User className="absolute left-3 top-3 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
                     <Input
                       id="full-name"
                       type="text"
@@ -265,118 +269,114 @@ const Auth = () => {
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
                       required
+                      className="pl-10 h-11 border-2 focus-visible:ring-primary/20 transition-all"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="email-register">Email</Label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="email-register"
-                        type="email"
-                        placeholder="tu@email.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="pl-10"
-                        required
-                      />
-                    </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email-register" className="text-sm font-semibold">Email</Label>
+                  <div className="relative group">
+                    <Mail className="absolute left-3 top-3 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                    <Input
+                      id="email-register"
+                      type="email"
+                      placeholder="tu@email.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="pl-10 h-11 border-2 focus-visible:ring-primary/20 transition-all"
+                      required
+                    />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="role-select">Tipo de Usuario</Label>
-                    <Select value={selectedRole} onValueChange={setSelectedRole} required>
-                      <SelectTrigger id="role-select">
-                        <SelectValue placeholder="Selecciona tu rol" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="administrador">Administrador</SelectItem>
-                        <SelectItem value="encuestador">Encuestador</SelectItem>
-                        <SelectItem value="respondiente">Usuario Respondiente</SelectItem>
-                      </SelectContent>
-                    </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="role-select" className="text-sm font-semibold">Tipo de Usuario</Label>
+                  <Select value={selectedRole} onValueChange={setSelectedRole} required>
+                    <SelectTrigger id="role-select" className="h-11 border-2 focus:ring-primary/20">
+                      <SelectValue placeholder="Selecciona tu rol" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="administrador" className="cursor-pointer">Administrador</SelectItem>
+                      <SelectItem value="encuestador" className="cursor-pointer">Encuestador</SelectItem>
+                      <SelectItem value="respondiente" className="cursor-pointer">Usuario Respondiente</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password-register" className="text-sm font-semibold">Contraseña</Label>
+                  <div className="relative group">
+                    <Lock className="absolute left-3 top-3 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                    <Input
+                      id="password-register"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Mínimo 6 caracteres"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="pl-10 pr-12 h-11 border-2 focus-visible:ring-primary/20 transition-all"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-3 text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="password-register">Contraseña</Label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="password-register"
-                        type={showPassword ? "text" : "password"}
-                        placeholder="Mínimo 6 caracteres"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="pl-10 pr-10"
-                        required
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? (
-                          <EyeOff className="h-4 w-4 text-muted-foreground" />
-                        ) : (
-                          <Eye className="h-4 w-4 text-muted-foreground" />
-                        )}
-                      </Button>
-                    </div>
-                    {password && (
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-xs">
-                          <span className="text-muted-foreground">Fuerza de contraseña:</span>
-                          <span className={passwordStrength >= 70 ? 'text-green-600' : passwordStrength >= 40 ? 'text-yellow-600' : 'text-destructive'}>
-                            {getStrengthText()}
-                          </span>
-                        </div>
-                        <div className="h-2 bg-secondary rounded-full overflow-hidden">
-                          <div
-                            className={`h-full transition-all duration-300 ${getStrengthColor()}`}
-                            style={{ width: `${passwordStrength}%` }}
-                          />
-                        </div>
+                  {password && (
+                    <div className="space-y-2 mt-3 p-3 bg-muted/30 rounded-lg border">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground font-medium">Fuerza de contraseña:</span>
+                        <span className={`font-semibold ${
+                          passwordStrength < 40 ? 'text-destructive' : 
+                          passwordStrength < 70 ? 'text-yellow-600' : 
+                          'text-green-600'
+                        }`}>
+                          {getStrengthText()}
+                        </span>
                       </div>
-                    )}
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="confirm-password">Confirmar Contraseña</Label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="confirm-password"
-                        type={showConfirmPassword ? "text" : "password"}
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        className="pl-10 pr-10"
-                        required
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      >
-                        {showConfirmPassword ? (
-                          <EyeOff className="h-4 w-4 text-muted-foreground" />
-                        ) : (
-                          <Eye className="h-4 w-4 text-muted-foreground" />
-                        )}
-                      </Button>
+                      <div className="h-2.5 w-full bg-muted rounded-full overflow-hidden">
+                        <div
+                          className={`h-full transition-all duration-500 ${getStrengthColor()}`}
+                          style={{ width: `${passwordStrength}%` }}
+                        />
+                      </div>
                     </div>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password-confirm" className="text-sm font-semibold">Confirmar Contraseña</Label>
+                  <div className="relative group">
+                    <Lock className="absolute left-3 top-3 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                    <Input
+                      id="password-confirm"
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="Confirma tu contraseña"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="pl-10 pr-12 h-11 border-2 focus-visible:ring-primary/20 transition-all"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-3 text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
                   </div>
-                </CardContent>
-                <CardFooter>
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? 'Creando cuenta...' : 'Crear Cuenta'}
-                  </Button>
-                </CardFooter>
+                </div>
+                <Button 
+                  type="submit" 
+                  className="w-full h-11 font-semibold text-base shadow-lg hover:shadow-xl transition-all mt-6" 
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Registrando..." : "Registrarse"}
+                </Button>
               </form>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </div>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
     </div>
   );
 };
