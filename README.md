@@ -2,13 +2,18 @@
 
 Sistema de encuestas web desarrollado como proyecto académico para el curso Desarrollo de Software en Equipo (TSP) del Politécnico Grancolombiano.
 
+
+Autores:
+Kelly Sáenz
+Carlos Guerra
+
 ## 📋 Descripción
 
 Este sistema permite la creación, aplicación y análisis de encuestas personalizadas dentro de instituciones u organizaciones, aplicando buenas prácticas de ingeniería de software y metodologías ágiles (TSP + SCRUM).
 
 ## 🚀 Características Principales
 
-- **Autenticación de usuarios**: Registro e inicio de sesión seguro mediante Postgres Cloud (Supabase)
+- **Autenticación de usuarios**: Registro e inicio de sesión seguro mediante Postgres (Supabase)
 - **Sistema de roles**: Tres tipos de usuarios con permisos diferenciados:
   - **Administrador**: Acceso completo, vista de todos los usuarios y estadísticas
   - **Encuestador**: Creación, edición y gestión de encuestas propias
