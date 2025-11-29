@@ -4,7 +4,7 @@ Sistema de encuestas web desarrollado como proyecto académico para el curso Des
 
 
 Autores:
-Kelly Sáenz
+Kelly Sáenz - 
 Carlos Guerra
 
 ## 📋 Descripción
