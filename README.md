@@ -1,6 +1,6 @@
 # Sistema de Encuestas Web
 
-Sistema de encuestas web desarrollado como proyecto académico para el curso Desarrollo de Software en Equipo (TSP) del Politécnico Grancolombiano.
+Sistema de encuestas web desarrollado como proyecto académico para Desarrollo de Software en Equipo (TSP) del Politécnico Grancolombiano.
 
 
 Autores:
